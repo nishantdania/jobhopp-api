@@ -175,5 +175,58 @@ module.exports = {
 		
 	},
 
+	login: (req, res) => {
+
+		const success = ResponseService.success(res);
+		const failure = ResponseService.failure(res);
+		const params = req.allParams();
+
+		var fetchUser = (params) => new Promise((resolve, reject) => {  
+			const email = params.email;
+			const password = params.password;
+
+			if(!email || !password || !EmailService.validateEmail(email)) {
+				reject(new Error('Invalid email or password'));
+			}
+
+			User.findOne({email : email})
+			.then((user) => {  
+				if(!user) {
+					reject();
+				}
+				else {
+					User.comparePassword(password, user.password)
+					.then((valid) => {  
+						if(valid) {
+							resolve(user);
+						}
+						else {
+							reject(new Error('Invalid email or password'));
+						}
+					})
+					.catch(reject)
+				}
+				
+			})
+			.catch(reject)
+
+		});
+
+		var generateToken = (user) => new Promise((resolve, reject) => {
+			var payload = {
+				id: user.id
+			};
+			var token = JwtService.generateToken(payload);
+			var data = { token : token };
+			resolve(data);
+		});
+
+		fetchUser(params)
+		.then(generateToken)
+		.then(success)
+		.catch(failure)
+
+	},
+
 };
 

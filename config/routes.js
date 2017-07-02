@@ -33,7 +33,8 @@ module.exports.routes = {
   ***************************************************************************/
 
   '/': {
-    view: 'homepage'
+    view: 'homepage',
+		policy: 'isLoggedIn'
   },
 
 	'get /jobs':	'JobController.fetchAllJobs',
@@ -41,6 +42,8 @@ module.exports.routes = {
 	'post /register':	'AuthController.register',
 	'post /verify':	'AuthController.verify',
 	'post /verifyRequest': 'AuthController.verifyRequest',
+	'post /login': 'AuthController.login',
+
 	'post /resetPassword': 'AccountController.resetPassword',
 	'post /resetPasswordRequest': 'AccountController.resetPasswordRequest',
 
