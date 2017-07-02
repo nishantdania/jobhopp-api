@@ -1,1 +1,3 @@
-# jobhopp-api
+# api
+
+a [Sails](http://sailsjs.org) application
