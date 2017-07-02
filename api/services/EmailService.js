@@ -1,5 +1,9 @@
 var mgcon	= sails.config.mailgun;
 var mailgun = require('mailgun-js')({apiKey: mgcon.api_key, domain: mgcon.domain});
+var EmailTemplate = require('email-templates').EmailTemplate;
+var path = require('path');
+
+var templatesDir = path.resolve(__dirname, '../../assets/templates');
 
 const NOREPLY = 'Jobhopp<noreply@mg.jobhopp.com>';
 const VERIFICATION_SUBJECT = 'Please verify your Jobhopp account';
@@ -31,6 +35,24 @@ module.exports = {
 
 		var html = '<html>Hi\nYour verification link is <a>' + token + '</a></html>';
 
+		var template = new EmailTemplate(path.join(templatesDir, 'verificationEmail'));
+		var locals = {
+			url: token
+		};
+
+		template.render(locals, function (err, results) {
+			if (err) {
+				return console.error(err);
+			}
+			var data = {
+				from: NOREPLY,
+				to: options.email,
+				subject: VERIFICATION_SUBJECT,
+				html: results.html
+			};	
+			sendMail(data, resolve, reject);
+		});
+/**
 		var data = {
 			from: NOREPLY,
 			to: options.email,
@@ -39,7 +61,7 @@ module.exports = {
 		};	
 
 		sendMail(data, resolve, reject);
-
+**/
 	}),
 
 	sendPasswordResetEmail: (options) => new Promise((resolve, reject) => {

@@ -85,8 +85,8 @@ module.exports = {
 	mailgun: {
 		api_key: 'key-c1a6a15931782786823847346cb05798',
 		api_base_url: 'https://api.mailgun.net/v3/sandboxf77d7f174151408a85983eca50cb112a.mailgun.org',
-		domain: 'sandboxf77d7f174151408a85983eca50cb112a.mailgun.org',	
-		pause: true
+		domain:	'sandboxf77d7f174151408a85983eca50cb112a.mailgun.org',	
+		pause:	true 
 	}
 
 };
