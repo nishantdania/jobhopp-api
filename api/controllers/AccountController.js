@@ -5,6 +5,8 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
+var uuid = require('uuid/v4');
+
 module.exports = {
 
 	resetPassword: (req, res) => {
@@ -25,10 +27,10 @@ module.exports = {
 			User.findOne({passwordToken : token})
 			.then((user) => {
 				if(!user) {
-					reject();
+					return reject();
 				}
 				if(!user.isVerified) {
-					reject(new Error('Please verify account before setting a password'));
+					return reject(new Error('Please verify account before setting a password'));
 				}
 				resolve({
 					password : password,
@@ -62,6 +64,53 @@ module.exports = {
 		.catch(failure)
 
 	},	
+
+	resetPasswordRequest: (req, res) => {  
+		
+		const success = ResponseService.success(res);
+		const failure = ResponseService.failure(res);
+		const params = req.allParams();
+
+		var checkIfVerified = (params) => new Promise((resolve, reject) => {  
+			const email = params.email;
+			if(!email || !EmailService.validateEmail(email)) {
+				reject(new Error('Invalid email'));
+			}
+			User.findOne({email : email})
+			.then((user) => {
+				if(!user.isVerified) {
+					reject(new Error('Account not verified'))
+				}
+				resolve(user);
+			})
+			.catch(reject)
+		});
+
+		var updateToken = (user) => new Promise((resolve, reject) => {
+			var token =	uuid();
+			var expiry = new Date();
+			expiry.setHours(expiry.getHours() + 6);
+			user.passwordToken = token;
+			user.passwordTokenExpire = expiry;
+			user.save()
+			.then((err) => {
+				if(err) {
+					return reject();
+				}
+				resolve({
+					email : user.email,
+					token : token
+				}); 
+			});
+		});
+
+		checkIfVerified(params)
+		.then(updateToken)
+		.then(EmailService.sendPasswordResetEmail)
+		.then(success)
+		.catch(failure)
+		
+	},
 	
 };
 

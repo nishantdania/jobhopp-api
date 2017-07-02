@@ -6,4 +6,6 @@ module.exports.mailgun = {
 
 	api_base_url: 'https://api.mailgun.net/v3/mg.jobhopp.com',
 
+	pause: false,
+
 }

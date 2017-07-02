@@ -63,7 +63,7 @@ module.exports = {
 
 		checkExistingUser(params)
 		.then(createUser)
-		//.then(EmailService.sendVerificationEmail)
+		.then(EmailService.sendVerificationEmail)
 		.then(success)
 		.catch(failure);
 
@@ -112,7 +112,7 @@ module.exports = {
 	
 			user.save((err) => {
 				if(err) {  
-					reject();
+					return reject();
 				}
 				var obj = {
 					token : passwordToken
@@ -126,6 +126,53 @@ module.exports = {
 		.then(success)
 		.catch(failure)				
 
+	},
+
+	verifyRequest: (req, res) => {  
+		
+		const success = ResponseService.success(res);
+		const failure = ResponseService.failure(res);
+		const params = req.allParams();
+
+		var checkIfVerified = (params) => new Promise((resolve, reject) => {  
+			const email = params.email;
+			if(!email || !EmailService.validateEmail(email)) {
+				reject(new Error('Invalid email'));
+			}
+			User.findOne({email : email})
+			.then((user) => {
+				if(user.isVerified) {
+					reject(new Error('Account already verified'))
+				}
+				resolve(user);
+			})
+			.catch(reject)
+		});
+
+		var updateToken = (user) => new Promise((resolve, reject) => {
+			var token =	uuid();
+			var expiry = new Date();
+			expiry.setDate(expiry.getDate() + 1);
+			user.verificationToken = token;
+			user.verificationExpire = expiry;
+			user.save()
+			.then((err) => {
+				if(err) {
+					return reject();
+				}
+				resolve({
+					email : user.email,
+					token : token
+				}); 
+			});
+		});
+
+		checkIfVerified(params)
+		.then(updateToken)
+		.then(EmailService.sendVerificationEmail)
+		.then(success)
+		.catch(failure)
+		
 	},
 
 };

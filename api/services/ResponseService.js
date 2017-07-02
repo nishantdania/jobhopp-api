@@ -8,7 +8,7 @@ module.exports = {
 
 	failure: (res) => { 
 		return (err) => { 
-			res.badRequest(err);
+			res.badRequest(err && err.message);
 		}
 	}
 
