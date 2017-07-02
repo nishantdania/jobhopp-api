@@ -9,7 +9,7 @@ var uuid = require('uuid/v4');
 
 module.exports = {
 	
-	register: function(req, res) {
+	register: (req, res) => {
 
 		const success = ResponseService.success(res);
 		const failure = ResponseService.failure(res);
@@ -63,13 +63,70 @@ module.exports = {
 
 		checkExistingUser(params)
 		.then(createUser)
-		.then(EmailService.sendVerificationEmail)
+		//.then(EmailService.sendVerificationEmail)
 		.then(success)
 		.catch(failure);
 
 	},
 
+	verify: (req, res) => {  
 
+		const success = ResponseService.success(res);
+		const failure = ResponseService.failure(res);
+		const params = req.allParams();
+
+		var checkTokenValidity = (params) => new Promise((resolve, reject) => {  
+			var token = params.token;
+			if(!token) {  
+				reject(new Error('Invalid token'));
+			}
+			User.findOne({verificationToken : token})
+			.then((user) => {  
+				if(!user) { 
+					reject(new Error('Invalid token'));
+				}
+
+				var expires = user.verificationExpire;
+				var today = new Date();
+				var timeDifference = expires.getTime() - today.getTime();
+
+				if(timeDifference <= 0) {  
+					reject(new Error('Token Expired'));
+				}
+				resolve(user);
+			})
+			.catch(reject)
+		});
+
+		var updateUser = (user) => new Promise((resolve, reject) => {
+			var passwordToken = uuid();			
+			var today = new Date();
+			var expiry = new Date();
+			expiry.setHours(today.getHours() + 6);
+
+			user.isVerified = true;
+			user.verificationToken = null;
+			user.verificationExpire = null;
+			user.passwordToken = passwordToken;
+			user.passwordTokenExpire = expiry;
+	
+			user.save((err) => {
+				if(err) {  
+					reject();
+				}
+				var obj = {
+					token : passwordToken
+				};
+				resolve(obj);
+			})
+		});
+
+		checkTokenValidity(params)
+		.then(updateUser)
+		.then(success)
+		.catch(failure)				
+
+	},
 
 };
 

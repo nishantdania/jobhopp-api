@@ -38,7 +38,8 @@ module.exports.routes = {
 
 	'get /jobs':	'JobController.fetchAllJobs',
 
-	'post /register':	'AuthController.register'	,
+	'post /register':	'AuthController.register',
+	'post /verify':	'AuthController.verify',
 
   /***************************************************************************
   *                                                                          *

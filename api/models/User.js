@@ -36,12 +36,12 @@ module.exports = {
 			type: 'datetime'
 		},		
 
-		forgotPasswordToken: {
+		passwordToken: {
 			type: 'string',
 			defaultsTo: null
 		},
 
-		forgotPasswordTokenExpire: {
+		passwordTokenExpire: {
 			type: 'datetime'
 		},
 
