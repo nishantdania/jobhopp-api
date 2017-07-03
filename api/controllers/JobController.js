@@ -52,15 +52,16 @@ module.exports = {
 		var updateQuery = {
 			isDeleted : true
 		};
+	
+		var checkPost = (post) => new Promise((resolve, reject) => {
+			if(post.length < 1) {
+				reject();
+			}
+			resolve(post);
+		});
 
 		JobPost.update(findQuery, updateQuery)
-		.then((post) => new Promise((resolve, reject) => {
-				if(post.length < 1) {
-					reject();
-				}
-				resolve(post);
-			})   
-		)
+		.then(checkPost)
 		.then(success)
 		.catch(failure)
 
@@ -72,14 +73,16 @@ module.exports = {
 		const failure = ResponseService.failure(res);
 		const user = req.user;
 
-		User.findOne({id : user.id})
-		.populate('jobPosts')
-		.then((user) => new Promise((resolve, reject) => {  
+		var prune = (user) => new Promise((resolve, reject) => {
 			var filtered = user.jobPosts.filter((post) => {
 				return !post.isDeleted
 			});
 			resolve(filtered);
-		}))
+		});
+
+		User.findOne({id : user.id})
+		.populate('jobPosts')
+		.then(prune)
 		.then(success)
 		.catch(failure)
 		

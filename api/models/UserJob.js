@@ -10,7 +10,8 @@ module.exports = {
   attributes: {
 
 		company: {
-			type: 'string'
+			type: 'string',
+			required: true
 		},
 
 		role: {
@@ -31,7 +32,8 @@ module.exports = {
 
 		status: { 
 			type: 'string',
-			enum: ['interested', 'applied', 'offered', 'accepted', 'rejected', 'interview', 'test']
+			enum: ['interested', 'applied', 'offered', 'accepted', 'rejected', 'interview', 'test'],
+			defaultsTo: 'interested'
 		},
 
 		nextDeadline: {
@@ -48,6 +50,11 @@ module.exports = {
 
 		user: {
 			model: 'user'
+		},
+
+		isDeleted: { 
+			type: 'boolean',
+			defaultsTo: false
 		},
 
   }
