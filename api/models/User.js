@@ -47,6 +47,16 @@ module.exports = {
 			type: 'datetime'
 		},
 
+		jobPosts: {  
+			collection: 'jobPost',
+			via: 'user'
+		},
+
+		dreamlist: {  
+			collection: 'userJob',
+			via: 'user'
+		},
+
   },
 
 	hashPassword: (password) => new Promise((resolve, reject) => { 
