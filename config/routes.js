@@ -37,15 +37,23 @@ module.exports.routes = {
 		policy: 'isLoggedIn'
   },
 
-	'get /jobs':	'JobController.fetchAllJobs',
+	'get /jobs':											'JobController.fetchAllJobs',
 
-	'post /register':	'AuthController.register',
-	'post /verify':	'AuthController.verify',
-	'post /verifyRequest': 'AuthController.verifyRequest',
-	'post /login': 'AuthController.login',
+	'post /register':									'AuthController.register',
+	'post /verify':										'AuthController.verify',
+	'post /verifyRequest':						'AuthController.verifyRequest',
+	'post /login':										'AuthController.login',
 
-	'post /resetPassword': 'AccountController.resetPassword',
-	'post /resetPasswordRequest': 'AccountController.resetPasswordRequest',
+	'post /resetPassword':						'AccountController.resetPassword',
+	'post /resetPasswordRequest':			'AccountController.resetPasswordRequest',
+
+	'post /jobPost':									'JobController.addJobPost',
+	'delete /jobPost/:id':						'JobController.deleteJobPost',
+	'get /user/jobPosts':							'JobController.fetchUserJobPosts',
+	
+	'post /userJob':									'UserJobController.addUserJob',
+	'update /userJob/:id':						'UserJobController.updateUserJob',
+	'delete /userJob/:id':						'UserJobController.deleteUserJob',
 
   /***************************************************************************
   *                                                                          *

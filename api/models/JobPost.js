@@ -33,6 +33,11 @@ module.exports = {
 			model: 'user'
 		},
 
+		isDeleted: {  
+			type: 'boolean',
+			defaultsTo: false
+		},
+
   }
 };
 
