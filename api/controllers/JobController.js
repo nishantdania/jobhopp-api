@@ -57,7 +57,7 @@ module.exports = {
 			if(post.length < 1) {
 				reject();
 			}
-			resolve(post);
+			resolve(post[0]);
 		});
 
 		JobPost.update(findQuery, updateQuery)

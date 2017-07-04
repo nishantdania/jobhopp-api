@@ -21,7 +21,7 @@ module.exports = {
 			location: params.location,
 			link: params.link,
 			category: params.category,
-			status: params.status,
+			status: params.status || 'interested',
 			nextDeadline: params.nextDeadline,
 			dateApplied: params.dateApplied,
 			notes: params.notes
@@ -60,7 +60,7 @@ module.exports = {
 			if(post.length < 1) {
 				reject();
 			}
-			resolve(post);
+			resolve(post[0]);
 		});
 
 		UserJob.update(findQuery, updateQuery)
@@ -89,7 +89,7 @@ module.exports = {
 			if(post.length < 1) {
 				reject();
 			}
-			resolve(post);
+			resolve(post[0]);
 		});
 
 		UserJob.update(findQuery, updateQuery)
@@ -105,15 +105,15 @@ module.exports = {
 		const failure = ResponseService.failure(res);
 		const user = req.user;
 
-		var prune = (user) => new Promise((resolve, reject) => {
-			var filtered = user.dreamlist.filter((post) => {
-				return !post.isDeleted
+		var prune = (jobs) => new Promise((resolve, reject) => {
+			var filtered = jobs.filter((job) => {
+				delete job.user;
+				return !job.isDeleted
 			});
 			resolve(filtered);
 		}); 
 
-		User.findOne({id : user.id})
-		.populate('dreamlist')
+		UserJob.find({user : user.id})
 		.then(prune)
 		.then(success)
 		.catch(failure)

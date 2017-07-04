@@ -52,7 +52,7 @@ module.exports.routes = {
 	'get /user/jobPosts':							'JobController.fetchUserJobPosts',
 	
 	'post /userJob':									'UserJobController.addUserJob',
-	'update /userJob/:id':						'UserJobController.updateUserJob',
+	'put /userJob/:id':						'UserJobController.updateUserJob',
 	'delete /userJob/:id':						'UserJobController.deleteUserJob',
 	'get /user/userJob':							'UserJobController.fetchUserJobs',
 
